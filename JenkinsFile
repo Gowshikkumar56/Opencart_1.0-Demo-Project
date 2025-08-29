@@ -2,17 +2,10 @@ pipeline {
     agent any
 
     stages {
-        stage('Checkout') {
-            steps {
-                // Jenkins will automatically checkout your repo, but adding explicit git if needed
-                checkout scm
-            }
-        }
-
         stage('Test OpenCart') {
             agent {
                 docker {
-                    image 'maven:3.9.9-eclipse-temurin-17' // Java 17 + Maven
+                    image 'maven:3.9.9-eclipse-temurin-17' // Java + Maven
                     reuseNode true
                 }
             }
@@ -23,7 +16,6 @@ pipeline {
             }
             post {
                 always {
-                    // Publish TestNG/JUnit reports so Jenkins shows results
                     junit 'target/surefire-reports/*.xml'
                     archiveArtifacts artifacts: 'target/surefire-reports/*', followSymlinks: false
                 }
